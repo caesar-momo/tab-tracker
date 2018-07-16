@@ -2,7 +2,7 @@ const { User } = require('../models')
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 
-function jwtSignUser (user) {
+function jwtSignUser(user) {
     const ONE_WEEK = 60 * 60 * 24 * 7
     return jwt.sign(user, config.authentication.jwtSecret, {
         expiresIn: ONE_WEEK
@@ -12,6 +12,7 @@ function jwtSignUser (user) {
 module.exports = {
     async register(req, res) {
         try {
+            console.log(req.body)
             const user = await User.create(req.body)
             res.send(user.toJSON())
         } catch (err) {
@@ -23,6 +24,7 @@ module.exports = {
     async login(req, res) {
         try {
             const { email, password } = req.body
+            console.log('User : ', User.length)
             const user = await User.findOne({
                 where: {
                     email: email
@@ -36,7 +38,7 @@ module.exports = {
             }
 
             const isPasswordValid = await user.comparePassword(password)
-            if(!isPasswordValid){
+            if (!isPasswordValid) {
                 return res.status(403).send({
                     error: 'The login information was incorrect'
                 })
